@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script>
+    const memberUpdate = () => {
+	  console.log('수정 함수 호출')
+	const id = document.getElementById("memberID").value
+	const email = document.querySelector("#memberEmail").value
+	const password = $("#memberPassword").val()
+	const name = $("#memberName").val()
+
+	const updateData = JSON.stringify({
+		memberId: id,
+		memberEmail: email,
+		memberPassword: password,
+		memberName: name
+	})
+
+	console.log(updateData) // 콘솔에 찍어보면 json타입으로 담긴것을 볼 수 있다.
+	const reqUrl = "/member/"+id
+
+	$.ajax({
+		// put(전체 덮어쓰기), patch(수정이 필요한 것만 바꿈)
+		type: "put",
+		data: updateData,
+		url: reqUrl,
+		// json타입으로 데이터를 보낼때는 아래 코드를 꼭 써야함.
+		contentType: "application/json",
+		success: function () {
+			location.href = "/member/"+id;
+  			// 수정 성공 시 /member/{memberId} 로 가겠다.(회원 상세조회)
+		},
+		error: function () {
+			alert("ajax 실패")
+		}
+	  })
+    }
+  </script>
+</head>
+<body>
+<h2>save.html</h2>
+<form action="/member/update" method="post">
+  <input type="hidden" name="memberId" id="memberID" th:value="${member.memberId}" placeholder="회원번호" readonly>
+  <input type="text" name="memberEmail" id="memberEmail" th:value="${member.memberEmail}" placeholder="이메일" readonly>
+  <input type="text" name="memberPassword" id="memberPassword" th:value="${member.memberPassword}" placeholder="비밀번호">
+  <input type="text" name="memberName" id="memberName" th:value="${member.memberName}" placeholder="이름">
+  <input type="submit" value="수정">
+  <input type="button" value="수정(put방식)" th:onclick="memberUpdate()">
+</form>
+</body>
+</html>
